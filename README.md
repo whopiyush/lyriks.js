@@ -52,7 +52,7 @@ lyriksClient.getLyrics("dynamite").then(lyrik => {
     if(!lyrik) throw "No data found"
     // You can access the data using the following functions
     const author = lyrik.getAuthor()
-    const title = lyrik.getAuthor()
+    const title = lyrik.getTitle()
     const source = lyrik.getSource()
     const search = lyrik.getSearch()
     const url = lyrik.getURL()
