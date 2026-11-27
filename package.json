@@ -26,7 +26,6 @@
   "license": "GNU GPLv3",
   "devDependencies": {
     "@types/cheerio": "^0.22.22",
-    "@types/jsontoxml": "^1.0.1",
     "@types/node": "^14.14.6",
     "@types/node-fetch": "^2.5.7",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
@@ -37,7 +36,6 @@
   },
   "dependencies": {
     "cheerio": "1.0.0-rc.3",
-    "jsontoxml": "^1.0.1",
     "node-cache": "^5.1.2",
     "node-fetch": "^2.6.1"
   }

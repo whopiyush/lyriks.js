@@ -2,7 +2,6 @@ import { EventEmitter } from "events"
 import fetch from "node-fetch"
 import * as NodeCache from "node-cache"
 import * as cheerio from "cheerio"
-import * as toXML from "jsontoxml"
 import Lyriks from "./Lyriks"
 import LyriksProvidersConfig from "./LyriksProvidersConfig"
 import { CacheLyriks, LyriksClientOptions, LyriksProviders } from "./types"
@@ -28,65 +27,35 @@ class LyriksClient extends EventEmitter {
     }
 
     async getLyrics (search: string, source: LyriksProviders = this.options.default!!): Promise<Lyriks | null> {
-        if (!Object.values(LyriksProviders).includes(source)) {
-            source = LyriksProviders.AZ_LYRICS
+        const providers = Object.values(LyriksProviders)
+        if (!providers.includes(source)) {
+            source = providers.includes(this.options.default!!) ? this.options.default!! : LyriksProviders.AZ_LYRICS
         }
 
-        if (this.cache.has(`${source}_${search}`)) {
-            const { url, title, author, content, searchData, src } = this.cache.get(`${source}_${search}`) as CacheLyriks
+        search = search.trim()
+        const cacheKey = `${source}_${search.toLowerCase()}`
+        if (this.cache.has(cacheKey)) {
+            const { url, title, author, content, searchData, src } = this.cache.get(cacheKey) as CacheLyriks
             return new Lyriks(url, title, author, content, searchData, src)
         }
         const config = LyriksProvidersConfig[source]
         try {
-            const res = await fetch(config.search.URL.replace("%s", encodeURIComponent(search)), {
-                headers: {
-                    "user-agent": this.options.userAgent!!
-                },
-                timeout: this.options.timeout
-            })
+            let $ = cheerio.load(await this.fetchText(config.search.URL.replace("%s", encodeURIComponent(search))))
 
-            let $: cheerio.Root
-            let url
-
-            if (config.search.isJSON) {
-                const jsonBody = await res.json()
-                const xml = toXML(jsonBody)
-                $ = cheerio.load(xml, {
-                    xmlMode: true
-                })
-            } else {
-                const body = await res.text()
-                $ = cheerio.load(body)
-            }
-
-            const element: cheerio.Cheerio = $(config.search.select).first()
-            if (config.search.isJSON) {
-                url = element.text()
-            } else {
-                url = element.attr("href")
-            }
-
+            let url = $(config.search.select).first().attr("href")
+            if (!url) return null
             if (config.parse.useURL) {
                 url = config.parse.URL + url
             }
 
-            if (!url) return null
-
-            const URLres = await fetch(url, {
-                headers: {
-                    "user-agent": this.options.userAgent!!
-                },
-                timeout: this.options.timeout
-            }).then(r => r.text())
-
-            $ = cheerio.load(URLres)
+            $ = cheerio.load(await this.fetchText(url))
             const title = $(config.parse.title).first().text().trim()
             const author = $(config.parse.author).first().text().trim()
             const content = $(config.parse.content).first().text().trim()
 
             if (!title || !author || !content) return null
 
-            this.cache.set(`${source}_${search}`, {
+            this.cache.set(cacheKey, {
                 src: source,
                 searchData: search,
                 url,
@@ -101,6 +70,17 @@ class LyriksClient extends EventEmitter {
             if (this.options.throwErrors) throw error
             return null
         }
+    }
+
+    private async fetchText (url: string): Promise<string> {
+        const res = await fetch(url, {
+            headers: {
+                "user-agent": this.options.userAgent!!
+            },
+            timeout: this.options.timeout
+        })
+        if (!res.ok) throw new Error(`Request to ${url} failed with status ${res.status}`)
+        return res.text()
     }
 }
 

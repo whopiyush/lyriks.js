@@ -2,7 +2,6 @@ export default {
     AZ_LYRICS: {
         search: {
             URL: "https://search.azlyrics.com/search.php?q=%s",
-            isJSON: false,
             select: "a[href*='lyrics/']"
         },
         parse: {
@@ -17,7 +16,6 @@ export default {
     MusixMatch: {
         search: {
             URL: "https://www.musixmatch.com/search/%s",
-            isJSON: false,
             select: "a.title[href*='lyrics/']"
         },
         parse: {
@@ -32,7 +30,6 @@ export default {
     LyricsFreak: {
         search: {
             URL: "https://www.lyricsfreak.com/search.php?q=%s",
-            isJSON: false,
             select: "a.song[href*='.html']"
         },
         parse: {
