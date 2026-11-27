@@ -1,15 +1,8 @@
-import { LyriksProviders, ProviderConfig } from "./types"
-
-const configs: Record<LyriksProviders, ProviderConfig> = {
+export default {
     AZ_LYRICS: {
-        // AZLyrics answers a browser-like user agent with a reCAPTCHA wall, but
-        // serves normally when the User-Agent header is empty. Search also needs
-        // the region token from /geo.js in the `x` parameter, otherwise the
-        // results table is omitted from the response.
         search: {
-            URL: "https://www.azlyrics.com/search/?q=%s&x=%token%",
-            select: "td.visitedlyr a[href*='lyrics/']",
-            requiresToken: true
+            URL: "https://search.azlyrics.com/search.php?q=%s",
+            select: "a[href*='lyrics/']"
         },
         parse: {
             title: "div.ringtone ~ b",
@@ -17,31 +10,20 @@ const configs: Record<LyriksProviders, ProviderConfig> = {
             content: "div.ringtone ~ div",
             useURL: false,
             URL: ""
-        },
-        bypass: {
-            emptyUserAgent: true
         }
     },
 
     MusixMatch: {
-        // The public /search/<query> route is blocked and its results are
-        // rendered client side, so search resolves via the artist page and the
-        // matching track is taken from the embedded __NEXT_DATA__ payload.
-        // Lyrics live in that same payload; the rendered DOM ships empty.
         search: {
-            URL: "https://www.musixmatch.com/artist/%s",
-            select: "",
-            base: "https://www.musixmatch.com"
+            URL: "https://www.musixmatch.com/search/%s",
+            select: "a.title[href*='lyrics/']"
         },
         parse: {
-            title: "",
-            author: "",
-            content: "",
+            title: "h1",
+            author: "h2 span a",
+            content: "div.mxm-lyrics > span",
             useURL: true,
             URL: "https://www.musixmatch.com"
-        },
-        bypass: {
-            emptyUserAgent: true
         }
     },
 
@@ -60,5 +42,3 @@ const configs: Record<LyriksProviders, ProviderConfig> = {
     }
 
 }
-
-export default configs
