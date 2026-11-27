@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Lyrics scraping API for nodejs",
   "main": "dist/index.js",
-  "typings": "typings/index.d.ts",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "eslint \"src/**\""
@@ -19,8 +19,7 @@
     "song"
   ],
   "files": [
-    "dist/**/*",
-    "typings/**/*"
+    "dist/**/*"
   ],
   "author": "Piyush Bhangale <bhangalepiyush@gmal.com>",
   "license": "GNU GPLv3",
