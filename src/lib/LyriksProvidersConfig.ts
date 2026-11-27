@@ -1,32 +1,5 @@
+// AZLyrics and MusixMatch were removed: both now block automated requests.
 export default {
-    AZ_LYRICS: {
-        search: {
-            URL: "https://search.azlyrics.com/search.php?q=%s",
-            select: "a[href*='lyrics/']"
-        },
-        parse: {
-            title: "div.ringtone ~ b",
-            author: "div.lyricsh b",
-            content: "div.ringtone ~ div",
-            useURL: false,
-            URL: ""
-        }
-    },
-
-    MusixMatch: {
-        search: {
-            URL: "https://www.musixmatch.com/search/%s",
-            select: "a.title[href*='lyrics/']"
-        },
-        parse: {
-            title: "h1",
-            author: "h2 span a",
-            content: "div.mxm-lyrics > span",
-            useURL: true,
-            URL: "https://www.musixmatch.com"
-        }
-    },
-
     LyricsFreak: {
         search: {
             URL: "https://www.lyricsfreak.com/search.php?q=%s",
@@ -35,10 +8,7 @@ export default {
         parse: {
             title: "div#breadcrumb span > span[itemprop=title]",
             author: "h2.lyric-song-head a",
-            content: "div#content",
-            useURL: true,
-            URL: "https://www.lyricsfreak.com"
+            content: "div#content"
         }
     }
-
 }

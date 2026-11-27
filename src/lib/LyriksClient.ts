@@ -15,7 +15,7 @@ class LyriksClient extends EventEmitter {
         this.options = Object.assign({
             userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0",
             timeout: 5000,
-            default: LyriksProviders.AZ_LYRICS,
+            default: LyriksProviders.LyricsFreak,
             throwErrors: false,
             cache: {
                 checkPeriod: 0,
@@ -29,7 +29,7 @@ class LyriksClient extends EventEmitter {
     async getLyrics (search: string, source: LyriksProviders = this.options.default!!): Promise<Lyriks | null> {
         const providers = Object.values(LyriksProviders)
         if (!providers.includes(source)) {
-            source = providers.includes(this.options.default!!) ? this.options.default!! : LyriksProviders.AZ_LYRICS
+            source = providers.includes(this.options.default!!) ? this.options.default!! : LyriksProviders.LyricsFreak
         }
 
         search = search.trim()
@@ -38,15 +38,17 @@ class LyriksClient extends EventEmitter {
             const { url, title, author, content, searchData, src } = this.cache.get(cacheKey) as CacheLyriks
             return new Lyriks(url, title, author, content, searchData, src)
         }
-        const config = LyriksProvidersConfig[source]
+        const config = LyriksProvidersConfig[source as keyof typeof LyriksProvidersConfig]
         try {
-            let $ = cheerio.load(await this.fetchText(config.search.URL.replace("%s", encodeURIComponent(search))))
+            if (!config) throw new Error(`${source} is no longer supported: the site blocks automated requests`)
 
-            let url = $(config.search.select).first().attr("href")
-            if (!url) return null
-            if (config.parse.useURL) {
-                url = config.parse.URL + url
-            }
+            const searchURL = config.search.URL.replace("%s", encodeURIComponent(search))
+            let $ = cheerio.load(await this.fetchText(searchURL))
+
+            const href = $(config.search.select).first().attr("href")
+            if (!href) return null
+            // Resolves relative and protocol-relative (`//host/path`) links.
+            const url = new URL(href, searchURL).href
 
             $ = cheerio.load(await this.fetchText(url))
             const title = $(config.parse.title).first().text().trim()

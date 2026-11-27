@@ -40,6 +40,12 @@ npm install lyriks.js
 yarn add lyriks.js
 ```
 
+## Providers
+
+Lyrics are fetched from **LyricsFreak** (`LyriksProviders.LyricsFreak`, the default).
+AZLyrics and MusixMatch block automated requests and are no longer supported; selecting
+them emits a `parsingError` and returns `null`.
+
 ## Example usage
 
 ```js

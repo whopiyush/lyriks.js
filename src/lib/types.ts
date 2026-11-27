@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 export enum LyriksProviders {
+    /** @deprecated No longer supported: the site blocks automated requests. */
     AZ_LYRICS = "AZ_LYRICS",
+    /** @deprecated No longer supported: the site blocks automated requests. */
     MusixMatch= "MusixMatch",
     LyricsFreak= "LyricsFreak",
 }
