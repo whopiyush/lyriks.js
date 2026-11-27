@@ -40,6 +40,12 @@ npm install lyriks.js
 yarn add lyriks.js
 ```
 
+## Providers
+
+Lyrics are fetched from **LyricsFreak** (`LyriksProviders.LyricsFreak`, the default).
+AZLyrics and MusixMatch block automated requests and are no longer supported; selecting
+them emits a `parsingError` and returns `null`.
+
 ## Example usage
 
 ```js
@@ -52,7 +58,7 @@ lyriksClient.getLyrics("dynamite").then(lyrik => {
     if(!lyrik) throw "No data found"
     // You can access the data using the following functions
     const author = lyrik.getAuthor()
-    const title = lyrik.getAuthor()
+    const title = lyrik.getTitle()
     const source = lyrik.getSource()
     const search = lyrik.getSearch()
     const url = lyrik.getURL()
