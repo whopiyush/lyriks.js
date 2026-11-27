@@ -36,7 +36,7 @@
     "typescript": "^4.0.5"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3",
+    "cheerio": "1.0.0-rc.3",
     "jsontoxml": "^1.0.1",
     "node-cache": "^5.1.2",
     "node-fetch": "^2.6.1"
